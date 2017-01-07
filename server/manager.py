@@ -191,8 +191,6 @@ class LoginManager(object):
             return self._safe_send(username, i, {JSON_TOKEN.TYPE : TYPE.FAIL})
 
     def _remove_conn(self, username, i):
-        if self._users[username][i] in self._base_line_num:
-            del self._base_line_num[self._users[username][i]]
         del self._users[username][i]
         if not self._users[username]:
             del self._users[username]
