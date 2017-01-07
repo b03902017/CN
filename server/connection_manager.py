@@ -28,10 +28,7 @@ class JSON_TOKEN:
     FILE_CONTENT = 'file_content'
     SEND_MESSAGE = 'send_message'
     RECV_MESSAGES = 'recv_messages'
-    BASE_LINE_NUM = 'base_line_num'
-    LINES_NUM = 'lines_num'
-    MIN_LINE_NUM = 'min_line_num'
-    TOTAL_LINES_NUM = 'total_lines_num'
+
 
 
 

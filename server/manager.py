@@ -86,7 +86,6 @@ class LoginManager(object):
         self._chatrooms_manage = ChatroomManager(group_file, self._accounts_manage)
         self._users = {}
         self._unlogin_conns = []
-        self._base_line_num = {}
         
     def add(self, username, conn):
         self._users.setdefault(username, []).append(conn)

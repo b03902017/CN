@@ -21,7 +21,7 @@ class Message(object):
         _log('Add new message %s' % msg)
 
     def __getitem__(self, index):
-        return self._msg[index]
+        return self._msgs[index]
 
     def __len__(self):
         return len(self._msgs)
@@ -40,10 +40,10 @@ class MessageManager(object):
         self._msgs_by_filename = {}
 
     def __getitem__(self, file_name):
-        if file_name not in self._msg_by_filename:
-            self._msg_by_filename[file_name] = Message(os.path.join(self._dir_name, file_name))
-        return self._msg_by_filename[file_name]
+        if file_name not in self._msgs_by_filename:
+            self._msgs_by_filename[file_name] = Message(os.path.join(self._dir_name, file_name))
+        return self._msgs_by_filename[file_name]
 
     def flush(self):
         for file_name in self._msgs_by_filename:
-            self._msg_by_filename[file_name].flush()
+            self._msgs_by_filename[file_name].flush()
