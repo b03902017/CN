@@ -1,5 +1,6 @@
 import threading
 import time
+import os
 
 from account_manager import AccountManager
 from connection_manager import Connection
@@ -161,11 +162,16 @@ class LoginManager(object):
         to_name = pkt.get(JSON_TOKEN.TO_NAME, '')
         if not self._chatrooms_manage.permit(to_name, username):
             return self._safe_send(username, i, {JSON_TOKEN.TYPE : TYPE.FAIL})
-        file_processed_name = self._files_manage.upload_to_server(pkt.get(JSON_TOKEN.FILE_NAME, ''), pkt.get(JSON_TOKEN.FILE_CONTENT, ''))
+        chatroom_name = self._chatrooms_manage.get_chatroom_name(to_name, username)
+        file_processed_name = self._files_manage.upload_to_server(chatroom_name, pkt.get(JSON_TOKEN.FILE_NAME, ''), pkt.get(JSON_TOKEN.FILE_CONTENT, ''))
         return self._handler_send_msg(username, i, {JSON_TOKEN.TO_NAME : to_name, JSON_TOKEN.SEND_MESSAGE : '[%s]upload. Please download by the processed name if processed' % file_processed_name})
     
     def _handler_recv_file(self, username, i, pkt):
-        content = self._files_manage.get_from_server(pkt.get(JSON_TOKEN.FILE_NAME, ''))
+        to_name = pkt.get(JSON_TOKEN.TO_NAME, '')
+        if not self._chatrooms_manage.permit(to_name, username):
+            return self._safe_send(username, i, {JSON_TOKEN.TYPE : TYPE.FAIL})
+        chatroom_name = self._chatrooms_manage.get_chatroom_name(to_name, username)
+        content = self._files_manage.get_from_server(chatroom_name, pkt.get(JSON_TOKEN.FILE_NAME, ''))
         if content is None:
             return self._safe_send(username, i, {JSON_TOKEN.TYPE : TYPE.FAIL})
         return self._safe_send(username, i, {JSON_TOKEN.TYPE : TYPE.SUCC, JSON_TOKEN.FILE_CONTENT : content})
