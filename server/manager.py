@@ -233,5 +233,5 @@ class Manager(threading.Thread):
             time.sleep(self.TIMESTAMP)
         self._logins_manage.flush()
 
-    def manage(conn):
+    def manage(self, conn):
         self._unlogins_manage.add(Connection(conn))
