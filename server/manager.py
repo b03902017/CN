@@ -188,10 +188,9 @@ class LoginManager(object):
         to_name = pkt.get(JSON_TOKEN.TO_NAME, '')
         if not self._chatrooms_manage.permit(to_name, username):
             return self._safe_send(username, i, {JSON_TOKEN.TYPE : TYPE.FAIL})
-        to_name = self._chatrooms_manage.get_chatroom_name(to_name, username)
+        chatroom_name = self._chatrooms_manage.get_chatroom_name(to_name, username)
         try:
-            conn = self._users[username][i]
-            msgs = [self._messages_manage[to_name][ind] for ind in range(0, len(self._messages_manage[name]))]
+            msgs = [self._messages_manage[chatroom_name][ind] for ind in range(0, len(self._messages_manage[chatroom_name]))]
             return self._safe_send(username, i, {JSON_TOKEN.TYPE : TYPE.SUCC, JSON_TOKEN.RECV_MESSAGES : msgs})
         except:
             return self._safe_send(username, i, {JSON_TOKEN.TYPE : TYPE.FAIL})
