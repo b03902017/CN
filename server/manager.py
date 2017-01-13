@@ -53,7 +53,7 @@ class UnloginManager(object):
         username = pkt.get(JSON_TOKEN.USERNAME, '')
         password = pkt.get(JSON_TOKEN.PASSWORD, '')
         if self._accounts_manage.valid(username, password):
-            temp = self._safe_send(i, {JASON_TOKEN.TYPE : TYPE.SUCC})
+            temp = self._safe_send(i, {JSON_TOKEN.TYPE : TYPE.SUCC})
             if temp == i:
                 self._login_conns.append((username, self._conns[i]))
                 _log('User %s login success' % username)
@@ -61,7 +61,7 @@ class UnloginManager(object):
                 temp = i - 1
             return temp
         else:
-            return self._safe_send(i, {JASON_TOKEN.TYPE : TYPE.FAIL})
+            return self._safe_send(i, {JSON_TOKEN.TYPE : TYPE.FAIL})
 
     def _handler_register(self, i, pkt):
         username = pkt.get(JSON_TOKEN.USERNAME, '')
@@ -110,8 +110,8 @@ class LoginManager(object):
             while i < len(self._users.get(username, [])):
                 try:
                     pkt = self._users[username][i].try_recv(self.TIMESTAMP)
-                except Expection as e:
-                    _log('Remove connection %r for %r' % (self._usres[username][i].peername, e))
+                except Exception as e:
+                    _log('Remove connection %r for %r' % (self._users[username][i].peername, e))
                     del self._users[username][i]
                     continue
                 if pkt:

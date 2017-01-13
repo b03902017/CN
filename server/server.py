@@ -63,6 +63,10 @@ def main():
                 QUIT = True
             else:
                 print 'use QUIT to stop server'
+        except KeyboardInterrupt:
+            server.stop()
+            server.join()
+            return 0
         except:
             pass
     server.stop()

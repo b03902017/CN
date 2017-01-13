@@ -31,6 +31,9 @@ class JSON_TOKEN:
 def _log(s):
     print 'Connection: %s' % s
 
+class ConnectionError(Exception):
+    pass
+
 class Connection(object):
 
     def __init__(self, sock):

@@ -19,9 +19,11 @@ def _get_pkt(conn):
 
 def connect(ip, port):
     try:
-        skt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        skt.connect((ip, port))
-        return Connection(s)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #sock.settimeout(TIMEOUT)
+        sock.connect((ip, port))
+        #sock.settimeout(None)
+        return Connection(sock)
     except:
         return None
 
@@ -77,7 +79,7 @@ def send_files(conn, to_name, files):
                    JSON_TOKEN.FILE_CONTENT : content})
         pkt = _get_pkt(conn)
     return pkt.get(JSON_TOKEN.TYPE) == TYPE.SUCC
-    
+
 def recv_file(conn, to_name, file_name):
     conn.send({JSON_TOKEN.TYPE : TYPE.RECV_FILE,
                JSON_TOKEN.TO_NAME : to_name,
