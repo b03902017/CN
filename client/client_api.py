@@ -63,7 +63,7 @@ def list_groups(conn):
 def create_groups(conn, groupname, users):
     # return succced or not
     conn.send({JSON_TOKEN.TYPE : TYPE.CREATE_GROUP,
-               JSON_TOKEN.NAME : groupname,
+               JSON_TOKEN.GROUP_NAME : groupname,
                JSON_TOKEN.USERS : users})
     pkt = _get_pkt(conn)
     return pkt.get(JSON_TOKEN.TYPE) == TYPE.SUCC
@@ -77,6 +77,15 @@ def send_files(conn, to_name, files):
                    JSON_TOKEN.FILE_CONTENT : content})
         pkt = _get_pkt(conn)
     return pkt.get(JSON_TOKEN.TYPE) == TYPE.SUCC
+    
+def recv_file(conn, to_name, file_name):
+    conn.send({JSON_TOKEN.TYPE : TYPE.RECV_FILE,
+               JSON_TOKEN.TO_NAME : to_name,
+               JSON_TOKEN.FILE_NAME : file_name})
+    pkt = _get_pkt(conn)
+    if pkt.get(JSON_TOKEN.TYPE) != TYPE.SUCC:
+        return False
+    return pkt.get(JSON_TOKEN.FILE_CONTENT, '')
 
 def send_msg(conn, to_name, msg):
     # return succced or not
@@ -86,7 +95,7 @@ def send_msg(conn, to_name, msg):
     pkt = _get_pkt(conn)
     return pkt.get(JSON_TOKEN.TYPE) == TYPE.SUCC
 
-def revv_msgs(conn, to_name):
+def recv_msgs(conn, to_name):
     # return msgs = [line1, line2, line3, ...]
     conn.send({JSON_TOKEN.TYPE : TYPE.RECV_MSGS,
                JSON_TOKEN.TO_NAME : to_name})
