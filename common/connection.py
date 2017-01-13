@@ -1,7 +1,6 @@
 import json
 import socket
 
-
 class TYPE:
     SUCC = 'succ'
     FAIL = 'fail'
@@ -13,7 +12,7 @@ class TYPE:
     CREATE_GROUP = 'create_group'
     SEND_FILE = 'send_file'
     RECV_FILE = 'recv_file'
-    SEND_MSG = 'sned_msg'
+    SEND_MSG = 'send_msg'
     RECV_MSGS = 'recv_msg'
 
 class JSON_TOKEN:
@@ -29,14 +28,8 @@ class JSON_TOKEN:
     SEND_MESSAGE = 'send_message'
     RECV_MESSAGES = 'recv_messages'
 
-
-
-
 def _log(s):
     print 'Connection: %s' % s
-
-class ConnectionError(Exception):
-    pass
 
 class Connection(object):
 
@@ -59,7 +52,6 @@ class Connection(object):
             self._sock.sendall(packet)
         except (ValueError, TypeError, socket.error) as e:
             _log('%r' % e)
-            raise ConnectionError('send error')
 
     def try_recv(self, timeout):
         try:
