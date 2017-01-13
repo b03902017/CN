@@ -3,12 +3,15 @@ import time
 import os
 
 from account_manager import AccountManager
-from connection_manager import Connection
-from connection_manager import JSON_TOKEN
-from connection_manager import TYPE
 from file_manager import FileManager
 from message_manager import MessageManager
 from chatroom_manager import ChatroomManager
+
+import sys
+sys.path.append("../common")
+from connection import Connection
+from connection import JSON_TOKEN
+from connection import TYPE
 
 def _log(s):
     print 'Manager: %s' % s
@@ -87,10 +90,10 @@ class LoginManager(object):
         self._chatrooms_manage = ChatroomManager(group_file, self._accounts_manage)
         self._users = {}
         self._unlogin_conns = []
-        
+
     def add(self, username, conn):
         self._users.setdefault(username, []).append(conn)
-        
+
     def get_unlogins(self):
         temp = self._unlogin_conns
         self._unlogin_conns = []
@@ -134,7 +137,7 @@ class LoginManager(object):
             return self._handler_recv_msgs(username, i, pkt)
         else:
             return self._safe_send(username, i, {JSON_TOKEN.TYPE : TYPE.FAIL})
-            
+
     def _handler_logout(self, username, i, pkt):
         temp = self._safe_send(username, i, {JSON_TOKEN.TYPE : TYPE.SUCC})
         if temp == i:
@@ -142,11 +145,11 @@ class LoginManager(object):
             _log('User %r logouted' % username)
             temp = self._remove_conn(username, i)
         return temp
-    
+
     def _handler_list_users(self, username, i, pkt):
         users = [(user, user in self._users) for user in self._accounts_manage._users.keys()]
         return self._safe_send(username, i, {JSON_TOKEN.TYPE : TYPE.SUCC, JSON_TOKEN.USERS : users})
-    
+
     def _handler_list_groups(self, username, i, pkt):
         groups = [group for group in self._chatrooms_manage._groups.keys() if self._chatrooms_manage.permit(group, username)]
         return self._safe_send(username, i, {JSON_TOKEN.TYPE : TYPE.SUCC, JSON_TOKEN.GROUPS : groups})
@@ -165,7 +168,7 @@ class LoginManager(object):
         chatroom_name = self._chatrooms_manage.get_chatroom_name(to_name, username)
         file_processed_name = self._files_manage.upload_to_server(chatroom_name, pkt.get(JSON_TOKEN.FILE_NAME, ''), pkt.get(JSON_TOKEN.FILE_CONTENT, ''))
         return self._handler_send_msg(username, i, {JSON_TOKEN.TO_NAME : to_name, JSON_TOKEN.SEND_MESSAGE : '[%s]upload. Please download by the processed name if processed' % file_processed_name})
-    
+
     def _handler_recv_file(self, username, i, pkt):
         to_name = pkt.get(JSON_TOKEN.TO_NAME, '')
         if not self._chatrooms_manage.permit(to_name, username):
@@ -175,7 +178,7 @@ class LoginManager(object):
         if content is None:
             return self._safe_send(username, i, {JSON_TOKEN.TYPE : TYPE.FAIL})
         return self._safe_send(username, i, {JSON_TOKEN.TYPE : TYPE.SUCC, JSON_TOKEN.FILE_CONTENT : content})
-        
+
     def _handler_send_msg(self, username, i, pkt):
         to_name = pkt.get(JSON_TOKEN.TO_NAME, '')
         if not self._chatrooms_manage.permit(to_name, username):
@@ -183,7 +186,7 @@ class LoginManager(object):
         chatroom_name = self._chatrooms_manage.get_chatroom_name(to_name, username)
         self._messages_manage[chatroom_name].add('[%s] %s' % (username, pkt.get(JSON_TOKEN.SEND_MESSAGE, '')))
         return self._safe_send(username, i, {JSON_TOKEN.TYPE : TYPE.SUCC})
-        
+
     def _handler_recv_msgs(self, username, i, pkt):
         to_name = pkt.get(JSON_TOKEN.TO_NAME, '')
         if not self._chatrooms_manage.permit(to_name, username):
@@ -200,7 +203,7 @@ class LoginManager(object):
         if not self._users[username]:
             del self._users[username]
         return i - 1
-    
+
     def _safe_send(self, username, i, json_obj):
         try:
             self._users[username][i].send(json_obj)
@@ -210,17 +213,17 @@ class LoginManager(object):
             return self._remove_conn(username, i)
 class Manager(threading.Thread):
     TIMESTAMP = 1e-2
-    
+
     def __init__(self, msg_dir, file_dir, account_file, group_file):
         super(Manager, self).__init__()
         self._accounts_manage = AccountManager(account_file)
         self._unlogins_manage = UnloginManager(self._accounts_manage)
         self._logins_manage = LoginManager(msg_dir, file_dir, group_file, self._accounts_manage)
         self._stop_flag = False
-        
+
     def stop(self):
         self._stop_flag = True
-        
+
     def run(self):
         while not self._stop_flag:
             self._unlogins_manage.handle_all()
