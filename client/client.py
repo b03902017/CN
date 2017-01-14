@@ -358,6 +358,10 @@ class ChatroomPage(tk.Frame):
         succ = False
         msg = self.input.get()
         try:
+            msg = msg.replace('fuck' , 'f**k')
+            msg = msg.replace('Fuck' , 'F**k')
+            msg = msg.replace('shit' , 's**t')
+            msg = msg.replace('Shit' , 'S**t')
             succ = client_api.send_msg(connect, chat_target, msg)
             if succ:
                 self.systemlog["text"] = "Send message success."
