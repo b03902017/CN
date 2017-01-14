@@ -8,12 +8,11 @@ password = ""
 ip = ""
 port = ""
 chat_target = ""
-adduser = ""
-
 users = []
 groups = []
 users_str = ""
 groups_str = ""
+group_users = []
 msgs = []
 msgs_str = ""
 connect = None
@@ -27,15 +26,15 @@ class Window(tk.Tk):
         container = tk.Frame(self)
 
         self.title("Client UI")
-        container.pack(side="top", fill="both", expand=True)
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
+        container.pack(side="top", fill="both", expand = True)
+        container.grid_rowconfigure(0, weight = 1)
+        container.grid_columnconfigure(0, weight = 1)
         self.frames = {}
-        for F in (ConnectPage , LoginPage, WelcomePage , ChatroomPage , CreategroupPage):
+        for F in (ConnectPage, LoginPage, WelcomePage, ChatroomPage, CreategroupPage):
             page_name = F.__name__
-            frame = F(parent=container, controller=self)
+            frame = F(parent=container, controller = self)
             self.frames[page_name] = frame
-            frame.grid(row=0, column=0, sticky="nsew")
+            frame.grid(row = 0, column = 0, sticky = "nsew")
         self.show_frame("ConnectPage")
 
     def show_frame(self, page_name):
@@ -44,35 +43,35 @@ class Window(tk.Tk):
 
 class ConnectPage(tk.Frame):
 
-    def __init__(self , parent , controller):
+    def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        self.login = tk.Label(self , text = "Connect to Server"  , height = 2, width = 15 ,font = Login_FONT)
-        self.login.grid(row = 0 , column = 1 , columnspan = 20)
+        self.login = tk.Label(self, text = "Connect to Server", height = 2, width = 15 ,font = Login_FONT)
+        self.login.grid(row = 0, column = 1, columnspan = 20)
 
-        self.spacegrid = tk.Label(self , text = "" , height = 3)
-        self.spacegrid.grid(row = 1 , column = 1)
+        self.spacegrid = tk.Label(self, text = "", height = 3)
+        self.spacegrid.grid(row = 1, column = 1)
 
-        self.ip = tk.Label(self , text = "IP : ")
-        self.ip.grid(row = 2 , column = 0 )
+        self.ip = tk.Label(self, text = "IP : ")
+        self.ip.grid(row = 2, column = 0)
         self.ipInput = tk.Entry(self)
-        self.ipInput.grid(row = 2 , column = 1  , columnspan = 20)
-        self.port = tk.Label(self , text = "Port : ")
-        self.port.grid(row = 3, column = 0 )
+        self.ipInput.grid(row = 2, column = 1, columnspan = 20)
+        self.port = tk.Label(self, text = "Port : ")
+        self.port.grid(row = 3, column = 0)
         self.portInput = tk.Entry(self)
-        self.portInput.grid(row = 3 , column = 1 ,columnspan = 20)
+        self.portInput.grid(row = 3, column = 1 ,columnspan = 20)
 
-        self.connectButton = tk.Button(self , text = "connect" , width = 7 , command = self.connect_event)
-        self.connectButton.grid(row = 3 , column = 22)
+        self.connectButton = tk.Button(self, text = "connect", width = 7, command = self.connect_event)
+        self.connectButton.grid(row = 3, column = 22)
 
-        self.spacegrid1 = tk.Label(self , text = "" , height = 10)
+        self.spacegrid1 = tk.Label(self, text = "", height = 10)
         self.spacegrid1.grid(row = 4)
-        self.systemlog = tk.Label(self , text = "syslog :")
-        self.systemlog.grid(row = 5 ,  column = 2 , columnspan = 10)
+        self.systemlog = tk.Label(self, text = "syslog :")
+        self.systemlog.grid(row = 5, column = 2, columnspan = 10)
 
     def connect_event(self):
         global connect
-        global ip , port
+        global ip, port
         ip = self.ipInput.get()
         port = int(self.portInput.get())
         if connect:
@@ -81,49 +80,83 @@ class ConnectPage(tk.Frame):
         if connect:
             self.controller.show_frame("LoginPage")
         else:
-            self.ipInput.delete(0 , 'end')
-            self.portInput.delete(0 , 'end')
+            self.ipInput.delete(0, 'end')
+            self.portInput.delete(0, 'end')
             self.systemlog["text"] = "Connect fail."
 
 class CreategroupPage(tk.Frame):
 
-    def __init__(self , parent , controller):
+    def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        self.spacegrid = tk.Label(self , text = "" , height = 3)
-        self.spacegrid.grid(row = 0 , column = 0)
+        self.spacegrid = tk.Label(self, text = "", height = 3)
+        self.spacegrid.grid(row = 0, column = 0)
 
-        self.title = tk.Label(self , text = "Create Group"  , height = 2, width = 15 ,font = Login_FONT)
-        self.title.grid(row = 0 , column = 1 , columnspan = 20)
+        self.title = tk.Label(self, text = "Create Group", height = 2, width = 15 ,font = Login_FONT)
+        self.title.grid(row = 0, column = 1, columnspan = 20)
 
-        self.spacegrid1 = tk.Label(self , text = "" , height = 3)
-        self.spacegrid1.grid(row = 1 , column = 1)
+        self.spacegrid1 = tk.Label(self, text = "", height = 3)
+        self.spacegrid1.grid(row = 1, column = 1)
 
-        self.chattarget = tk.Label(self , text = "Add User : " )
-        self.chattarget.grid(row = 2 , column = 0 )
-        self.chattargetInput = tk.Entry(self , width = 20)
-        self.chattargetInput.grid(row = 2 , column = 1  )
+        self.groupname = tk.Label(self, text = "Grp Name : ")
+        self.groupname.grid(row=2, column = 0)
+        self.groupnameInput = tk.Entry(self, width = 20)
+        self.groupnameInput.grid(row = 2, column = 1)
+        self.groupnameButton = tk.Button(self, text = "enter", command = self.groupname_event)
+        self.groupnameButton.grid(row = 2, column = 2)
 
-        self.addButton = tk.Button(self , text = "add", height = 1  ,command = self.add_event)
-        self.addButton.grid(row = 2 , column = 2 )
+        self.addtarget = tk.Label(self, text = "Add User : ")
+        self.addtarget.grid(row = 3, column = 0)
+        self.addtargetInput = tk.Entry(self, width = 20)
+        self.addtargetInput.grid(row = 3, column = 1)
 
-        self.systemlog = tk.Label(self , text = "syslog :")
-        self.systemlog.grid(row = 3 ,  column = 1)
+        self.addButton = tk.Button(self, text = "add", height = 1, command = self.add_event)
+        self.addButton.grid(row = 3, column = 2)
 
-        self.finishButton = tk.Button(self , text = "finish" ,command =self.finish_creategroup)
-        self.finishButton.grid(row = 2, column = 3)
+        self.systemlog = tk.Label(self, text = "syslog :")
+        self.systemlog.grid(row = 4, column = 1, columnspan = 5, sticky = "w")
+
+        self.finishButton = tk.Button(self, text = "finish" ,command = self.finish_creategroup_event)
+        self.finishButton.grid(row = 3, column = 3)
+
+    def groupname_event(self):
+        global group_name
+        if self.groupnameInput.get() == "":
+            self.systemlog["text"] = "Groupname can't be empty."
+        else:
+            group_name = self.groupnameInput.get()
+            self.systemlog["text"] = "Groupname = " + group_name
 
     def add_event(self):
-        global adduser
-        adduser += self.chattargetInput.get()
-        self.chattargetInput.delete(0 , 'end')
-        self.controller.show_frame("CreategroupPage")
+        global group_users
+        valid_target = False
+        target = self.addtargetInput.get()
+        for user, online in users:
+            if target == user:
+                valid_target = True
+                break;
+        if valid_target:
+            group_users.append(target)
+            self.systemlog["text"] = "add " + target + " to group success."
+        else:
+            self.systemlog["text"] = "user or group not exist."
+        self.addtargetInput.delete(0, 'end')
 
-    def finish_creategroup(self):
-        global adduser
-        adduser = ""
-        self.controller.show_frame("WelcomePage")
+    def finish_creategroup_event(self):
+        succ = False
+        if group_name == "":
+            self.systemlog["text"] = "Groupname can't be empty."
+        else:
+            try:
+                succ = client_api.create_group(connect, group_name, group_users)
+                if succ:
+                    self.systemlog["text"] = "syslog :"
+                    self.controller.show_frame("WelcomePage")
+                else:
+                    self.systemlog["text"] = "Create group fail."
+            except:
+                self.systemlog["text"] = "Create group fail."
 
 class LoginPage(tk.Frame):
 
@@ -131,39 +164,39 @@ class LoginPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        self.login = tk.Label(self , text = "Welcome" , height = 2, width = 15 ,font = Login_FONT)
-        self.login.grid(row = 0 , column = 1 , columnspan = 20)
+        self.login = tk.Label(self, text = "Welcome", height = 2, width = 15 ,font = Login_FONT)
+        self.login.grid(row = 0, column = 1, columnspan = 20)
 
-        self.welcome = tk.Label(self , text = "" , height = 3, font = Login_FONT)
-        self.welcome.grid(row = 1 , column = 1)
+        self.welcome = tk.Label(self, text = "", height = 3, font = Login_FONT)
+        self.welcome.grid(row = 1, column = 1)
 
-        self.user = tk.Label(self , text = "Username : ")
-        self.user.grid(row = 2 , column = 0 )
+        self.user = tk.Label(self, text = "Username : ")
+        self.user.grid(row = 2, column = 0)
         self.userInput = tk.Entry(self)
-        self.userInput.grid(row = 2 , column = 1  , columnspan = 20)
-        self.password = tk.Label(self , text = "Password : ")
-        self.password.grid(row = 3, column = 0 )
-        self.passwordInput = tk.Entry(self , show = "*")
-        self.passwordInput.grid(row = 3 , column = 1 ,columnspan = 20)
-        self.passconfirm = tk.Label(self , text = "Pass Confirm: ")
-        self.passconfirm.grid(row = 4, column = 0 )
-        self.passconfirmInput = tk.Entry(self , show = "*")
-        self.passconfirmInput.grid(row = 4 , column = 1 ,columnspan = 20)
+        self.userInput.grid(row = 2, column = 1, columnspan = 20)
+        self.password = tk.Label(self, text = "Password : ")
+        self.password.grid(row = 3, column = 0)
+        self.passwordInput = tk.Entry(self, show = "*")
+        self.passwordInput.grid(row = 3, column = 1 ,columnspan = 20)
+        self.passconfirm = tk.Label(self, text = "Pass Confirm: ")
+        self.passconfirm.grid(row = 4, column = 0)
+        self.passconfirmInput = tk.Entry(self, show = "*")
+        self.passconfirmInput.grid(row = 4, column = 1 ,columnspan = 20)
 
-        self.loginButton = tk.Button(self , text = "login" , width = 5 , command = self.login_event)
-        self.loginButton.grid(row = 3 , column = 22)
+        self.loginButton = tk.Button(self, text = "login", width = 5, command = self.login_event)
+        self.loginButton.grid(row = 3, column = 22)
 
-        self.registerButton = tk.Button(self , text = "regis" , width = 5 , command = self.register_event)
-        self.registerButton.grid(row = 2 , column = 22)
+        self.registerButton = tk.Button(self, text = "regis", width = 5, command = self.register_event)
+        self.registerButton.grid(row = 2, column = 22)
 
-        self.spacegrid = tk.Label(self , text = "" , height = 10)
+        self.spacegrid = tk.Label(self, text = "", height = 10)
         self.spacegrid.grid(row = 5)
-        self.systemlog = tk.Label(self , text = "syslog :")
-        self.systemlog.grid(row = 6 ,  column = 2 , columnspan = 10, sticky='w')
+        self.systemlog = tk.Label(self, text = "syslog :")
+        self.systemlog.grid(row = 6, column = 2, columnspan = 10, sticky='w')
 
     def register_event(self):
         succ = False
-        global user , password
+        global user, password
         user = self.userInput.get()
         password = self.passwordInput.get()
         passconfirm = self.passconfirmInput.get()
@@ -178,13 +211,13 @@ class LoginPage(tk.Frame):
                     self.systemlog["text"] = "Register fail."
             except:
                 self.systemlog["text"] = "Register fail."
-        self.userInput.delete(0 , 'end')
-        self.passwordInput.delete(0 , 'end')
-        self.passconfirmInput.delete(0 , 'end')
+        self.userInput.delete(0, 'end')
+        self.passwordInput.delete(0, 'end')
+        self.passconfirmInput.delete(0, 'end')
 
     def login_event(self):
         succ = False
-        global user , password
+        global user, password
         global logined
         user = self.userInput.get()
         password = self.passwordInput.get()
@@ -202,9 +235,9 @@ class LoginPage(tk.Frame):
                     self.systemlog["text"] = "Login fail."
             except:
                 self.systemlog["text"] = "Login fail."
-        self.userInput.delete(0 , 'end')
-        self.passwordInput.delete(0 , 'end')
-        self.passconfirmInput.delete(0 , 'end')
+        self.userInput.delete(0, 'end')
+        self.passwordInput.delete(0, 'end')
+        self.passconfirmInput.delete(0, 'end')
 
 class WelcomePage(tk.Frame):
 
@@ -212,51 +245,53 @@ class WelcomePage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        self.welcome = tk.Label(self , text = "Welcome" , width = 15 ,  height = 2 , font = Login_FONT)
-        self.welcome.grid(row = 1 , column = 0 , columnspan = 20)
+        self.welcome = tk.Label(self, text = "Welcome", width = 15, height = 2, font = Login_FONT)
+        self.welcome.grid(row = 1, column = 0, columnspan = 20)
 
-        self.chattarget = tk.Label(self , text = "User or Group name : " , width = 20)
-        self.chattarget.grid(row = 2 , column = 1 )
+        self.chattarget = tk.Label(self, text = "User or Group name : ", width = 20)
+        self.chattarget.grid(row = 2, column = 1)
         self.chattargetInput = tk.Entry(self)
-        self.chattargetInput.grid(row = 3 , column = 1  )
+        self.chattargetInput.grid(row = 3, column = 1)
 
-        self.userlist = tk.Label(self , text = "users :", width = 10 , height = 20)
-        self.userlist.grid(row  = 3 , column = 0  , rowspan = 20)
+        self.userlist = tk.Label(self, text = "users :", width = 10, height = 20)
+        self.userlist.grid(row  = 3, column = 0, rowspan = 20)
 
-        self.chatButton = tk.Button(self , text = "Chat" , command = self.choosetarget_event)
-        self.chatButton.grid(row = 3 , column = 2 )
+        self.chatButton = tk.Button(self, text = "Chat", command = self.choosetarget_event)
+        self.chatButton.grid(row = 3, column = 2)
 
-        self.creategroupButton = tk.Button(self , text = "Create Grp" , command = self.creategoup_event)
-        self.creategroupButton.grid(row = 4 , column = 2)
+        self.creategroupButton = tk.Button(self, text = "Create Grp", command = self.creategoup_event)
+        self.creategroupButton.grid(row = 4, column = 2)
 
-        self.systemlog = tk.Label(self , text = "syslog :")
-        self.systemlog.grid(row = 21 ,  column = 1, columnspan = 5, sticky='w')
+        self.systemlog = tk.Label(self, text = "syslog :")
+        self.systemlog.grid(row = 21, column = 1, columnspan = 5, sticky='w')
 
-        self.logoutButton = tk.Button(self , text = "logout" , command = self.logout_event)
-        self.logoutButton.grid(row = 21 , column = 3)
+        self.logoutButton = tk.Button(self, text = "logout", command = self.logout_event)
+        self.logoutButton.grid(row = 21, column = 3)
 
     def creategoup_event(self):
-        # TODO
-        self.chattargetInput.delete(0 , 'end')
+        global group_users , group_name
+        group_users = []
+        group_name = ""
+        self.chattargetInput.delete(0, 'end')
         self.systemlog["text"] = "syslog :"
         self.controller.show_frame("CreategroupPage")
 
     def choosetarget_event(self):
         valid_target = False
         target = self.chattargetInput.get()
-        for user , online in users:
+        for user, online in users:
             if target == user:
                 valid_target = True
                 break;
         if valid_target:
-            global chat_target , is_chatting
+            global chat_target, is_chatting
             chat_target = target
             is_chatting = True
-            self.chattargetInput.delete(0 , 'end')
+            self.chattargetInput.delete(0, 'end')
             self.controller.show_frame("ChatroomPage")
-            elf.systemlog["text"] = "syslog :"
+            self.systemlog["text"] = "syslog :"
         else:
-            self.chattargetInput.delete(0 , 'end')
+            self.chattargetInput.delete(0, 'end')
             self.systemlog["text"] = "user or group not exist."
 
     def logout_event(self):
@@ -280,36 +315,42 @@ class ChatroomPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        self.welcome = tk.Label(self , text = "" , height =1 , font = Login_FONT)
-        self.welcome.grid(row = 0 , column = 1 , columnspan = 20)
+        self.welcome = tk.Label(self, text = "", height =1, font = Login_FONT)
+        self.welcome.grid(row = 0, column = 1, columnspan = 20)
 
         self.chattarget = tk.Label(self)
         self.chattarget["text"] = "Talking with "  + chat_target + " ~"
-        self.chattarget.grid(row = 1 , column = 1)
+        self.chattarget.grid(row = 1, column = 1)
 
-        self.userlist = tk.Label(self , text = "users :" , width = 10 , height = 20)
-        self.userlist.grid(row  = 2 , column = 0 )
+        self.userlist = tk.Label(self, text = "users :", width = 10, height = 20)
+        self.userlist.grid(row  = 2, column = 0)
 
-        self.chatdata = tk.Label(self , text = "chatdata :" , height = 20)
-        self.chatdata.grid(row = 2 , column = 1)
+        self.chatdata = tk.Label(self, text = "chatdata :", height = 20)
+        self.chatdata.grid(row = 2, column = 1)
 
-        self.sendButton = tk.Button(self , text = "Send" , height = 1, command = self.send_msg_event)
-        self.sendButton.grid(row = 21 , column = 2 )
+        self.downloadchatButton = tk.Button(self, text = "Dw Chat", command = self.dw_chat_event)
+        self.downloadchatButton.grid(row = 21, column = 0)
 
         self.input = tk.Entry(self)
-        self.input.grid(row = 21 , column = 1  )
+        self.input.grid(row = 21, column = 1)
 
-        self.systemlog = tk.Label(self , text = "syslog :")
-        self.systemlog.grid(row = 22 ,  column = 0, columnspan = 5, rowspan = 2, sticky='wn')
+        self.sendButton = tk.Button(self, text = "Send", height = 1, command = self.send_msg_event)
+        self.sendButton.grid(row = 21, column = 2)
 
-        self.uploadButton = tk.Button(self , text = "Upld" , command = self.upload_event)
-        self.uploadButton.grid(row = 21 , column = 3)
+        self.uploadButton = tk.Button(self, text = "Upld", command = self.upload_event)
+        self.uploadButton.grid(row = 21, column = 3)
 
-        self.downloadButton = tk.Button(self , text = "Dwld" , command = self.download_event)
-        self.downloadButton.grid(row = 21 , column = 4)
+        self.downloadButton = tk.Button(self, text = "Dwld", command = self.download_event)
+        self.downloadButton.grid(row = 21, column = 4)
 
-        self.backButton = tk.Button(self , text = "back" , command = self.leave_chat_event)
-        self.backButton.grid(row = 0 , column = 4)
+        self.systemlog = tk.Label(self, text = "syslog :")
+        self.systemlog.grid(row = 22, column = 0, columnspan = 5, rowspan = 2, sticky='wn')
+
+        self.backButton = tk.Button(self, text = "back", command = self.leave_chat_event)
+        self.backButton.grid(row = 0, column = 4)
+
+    def dw_chat_event(self):
+        # TODO
 
     def send_msg_event(self):
         succ = False
@@ -322,8 +363,7 @@ class ChatroomPage(tk.Frame):
                 self.systemlog["text"] = "Send message fail."
         except:
             self.systemlog["text"] = "Send message fail."
-        self.input.delete(0 , 'end')
-
+        self.input.delete(0, 'end')
 
     def upload_event(self):
         succ = False
@@ -337,8 +377,7 @@ class ChatroomPage(tk.Frame):
                 self.systemlog["text"] = "Send files fail."
         except:
             self.systemlog["text"] = "Send files fail."
-        self.input.delete(0 , 'end')
-
+        self.input.delete(0, 'end')
 
     def download_event(self):
         filename = self.input.get()
@@ -351,19 +390,19 @@ class ChatroomPage(tk.Frame):
                 self.systemlog["text"] = "Download file success."
         except:
             self.systemlog["text"] = "Download file fail.\nPlease download by the processed name if needed."
-        self.input.delete(0 , 'end')
+        self.input.delete(0, 'end')
 
     def leave_chat_event(self):
         self.systemlog["text"] = ""
-        global chat_target , is_chatting
+        global chat_target, is_chatting
         chat_target = ""
         is_chatting = False
         self.controller.show_frame("WelcomePage")
 
 
 def update_users():
-    global users , groups
-    global users_str , groups_str
+    global users, groups
+    global users_str, groups_str
     users_str = ""
     groups_str = ""
     if connect and logined:
@@ -372,7 +411,7 @@ def update_users():
             groups = client_api.list_groups(connect)
         except:
             print "list users & groups fail."
-        for user , online in users:
+        for user, online in users:
             if online:
                 users_str += "\n+ " + user
             else:
@@ -380,8 +419,9 @@ def update_users():
         groups_str = "\n  ".join(groups)
 
 def update_msgs():
-    global msgs , msgs_str
+    global msgs, msgs_str
     msgs_str = ""
+    msgs = []
     if connect and logined and is_chatting:
         try:
             msgs = client_api.recv_msgs(connect, chat_target)
@@ -400,10 +440,10 @@ def update():
 
     update_msgs()
     app.frames[ChatroomPage.__name__].chatdata.config(text = msgs_str)
-    app.after(1000 , update)
+    app.after(1000, update)
 
 if __name__ == "__main__":
     global app
     app = Window()
-    app.after(1000 , update)
+    app.after(1000, update)
     app.mainloop()
