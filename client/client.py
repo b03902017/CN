@@ -352,7 +352,7 @@ class ChatroomPage(tk.Frame):
 
     def dw_chat_event(self):
         # TODO
-        elf.systemlog["text"] = "Download chat history."
+        self.systemlog["text"] = "Download chat history."
 
     def send_msg_event(self):
         succ = False
