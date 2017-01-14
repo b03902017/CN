@@ -351,8 +351,14 @@ class ChatroomPage(tk.Frame):
         self.backButton.grid(row = 0, column = 4)
 
     def dw_chat_event(self):
-        # TODO
-        self.systemlog["text"] = "Download chat history."
+        filename = "%s_%s_chat" % (user, chat_target)
+        try:
+            lines = client_api.recv_msgs(connect, chat_target)
+            content = "\n".join(lines)
+            open(filename, 'w').write(content)
+            self.systemlog["text"] = "Download chat history success."
+        except:
+            self.systemlog["text"] = "Download chat history fail."
 
     def send_msg_event(self):
         succ = False
