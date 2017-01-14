@@ -8,13 +8,16 @@ from connection import TYPE
 
 TIMEOUT = 0.01
 
+class ServerError(Exception):
+    pass
+
 def _get_pkt(conn):
     pkt = None
     while pkt is None:
         try:
             pkt = conn.try_recv(TIMEOUT)
         except:
-            pass
+            raise ServerError('')
     return pkt
 
 def connect(ip, port):

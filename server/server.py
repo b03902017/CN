@@ -34,7 +34,7 @@ class Server(object):
 def main():
     if len(sys.argv) != 2:
         print '[USAGE]'
-        print '    %r [listen port]' % sys.argv[0]
+        print '    server.py [listen port]'
         return 1
     try:
         port = int(sys.argv[1])

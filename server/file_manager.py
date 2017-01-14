@@ -1,4 +1,4 @@
-import os 
+import os
 
 def _log(s):
     print 'FILE: %s' % s
@@ -8,13 +8,13 @@ class FileManager(object):
         self._dir_name = dir_name
 
     def upload_to_server(self, chatroom_name, file_name, content):
-        if not os.path.exist(os.path.join(self._dir_name, chatroom_name)):
+        if not os.path.exists(os.path.join(self._dir_name, chatroom_name)):
             os.mkdir(os.path.join(self._dir_name, chatroom_name))
-        if os.path.exist(os.path.join(self._dir_name, chatroom_name, file_name)):
+        if os.path.exists(os.path.join(self._dir_name, chatroom_name, file_name)):
             try:
-                _log('exist duplicate file name <%s>' % file_name)
+                _log('exists duplicate file name <%s>' % file_name)
                 duplicate_index = 0
-                while os.path.exist(os.path.join(self._dir_name, chatroom_name, '%d.%s' % (duplicate_index, file_name))):
+                while os.path.exists(os.path.join(self._dir_name, chatroom_name, '%d.%s' % (duplicate_index, file_name))):
                     duplicate_index += 1
                 file_name = '%d.%s' % (duplicate_index, file_name)
                 with open(os.path.join(self._dir_name, chatroom_name, file_name), 'w') as f:
@@ -33,7 +33,7 @@ class FileManager(object):
                 return None
 
     def get_from_server(self, chatroom_name, file_name):
-        if not os.path.exist(os.path.join(self._dir_name, chatroom_name)):
+        if not os.path.exists(os.path.join(self._dir_name, chatroom_name)):
             return None
         try:
             with open(os.path.join(self._dir_name, chatroom_name, file_name), 'r') as f:
