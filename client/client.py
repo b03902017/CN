@@ -12,6 +12,7 @@ users = []
 groups = []
 users_str = ""
 groups_str = ""
+group_name = ""
 group_users = []
 msgs = []
 msgs_str = ""
@@ -351,6 +352,7 @@ class ChatroomPage(tk.Frame):
 
     def dw_chat_event(self):
         # TODO
+        elf.systemlog["text"] = "Download chat history."
 
     def send_msg_event(self):
         succ = False
