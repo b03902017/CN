@@ -158,7 +158,8 @@ class LoginManager(object):
         group_name = pkt.get(JSON_TOKEN.GROUP_NAME, '')
         lit = pkt.get(JSON_TOKEN.USERS, [])
         #print lit
-        #print lit.append(username)
+        lit.append(username)
+        print lit
         #print lit
         if self._chatrooms_manage.new_group(group_name, lit):
             return self._safe_send(username, i, {JSON_TOKEN.TYPE : TYPE.SUCC})
