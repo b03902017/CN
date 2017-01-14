@@ -143,7 +143,7 @@ class LoginPage(tk.Frame):
         self.userInput.grid(row = 2 , column = 1  , columnspan = 20)
         self.password = tk.Label(self , text = "Pass : ")
         self.password.grid(row = 3, column = 0 )
-        self.passwordInput = tk.Entry(self)
+        self.passwordInput = tk.Entry(self , show = "*")
         self.passwordInput.grid(row = 3 , column = 1 ,columnspan = 20)
 
         self.loginButton = tk.Button(self , text = "login" , width = 5 , command = self.login_event)
