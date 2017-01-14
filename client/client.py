@@ -150,6 +150,8 @@ class CreategroupPage(tk.Frame):
             self.systemlog["text"] = "Groupname can't be empty."
         else:
             try:
+                print group_name
+                print group_users
                 succ = client_api.create_group(connect, group_name, group_users)
                 if succ:
                     self.systemlog["text"] = "syslog :"
@@ -284,6 +286,10 @@ class WelcomePage(tk.Frame):
             if target == user:
                 valid_target = True
                 break;
+        for grp in groups:
+            if target == grp:
+                valid_target = True
+                break
         if valid_target:
             global chat_target, is_chatting
             chat_target = target
@@ -428,7 +434,7 @@ def update_users():
                 users_str += "\n+ " + user
             else:
                 users_str += "\n- " + user
-        groups_str = "\n  ".join(groups)
+        groups_str = '\n' + "\n  ".join(groups)
 
 def update_msgs():
     global msgs, msgs_str

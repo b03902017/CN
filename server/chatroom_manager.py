@@ -34,7 +34,8 @@ class ChatroomManager(object):
 
     def new_group(self, name, users):
         name = 'g_' + name
-        if name in self._groups:
+        #print users
+        if name in self._groups or users == None:
             return False
         _log('New group %r:%r' % (name, users))
         self._groups[name] = users

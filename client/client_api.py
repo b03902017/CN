@@ -65,8 +65,10 @@ def list_groups(conn):
     pkt = _get_pkt(conn)
     return pkt.get(JSON_TOKEN.GROUPS, [])
 
-def create_groups(conn, groupname, users):
+def create_group(conn, groupname, users):
     # return succced or not
+    #print groupname
+    #print users
     conn.send({JSON_TOKEN.TYPE : TYPE.CREATE_GROUP,
                JSON_TOKEN.GROUP_NAME : groupname,
                JSON_TOKEN.USERS : users})

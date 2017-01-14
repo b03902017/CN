@@ -1,4 +1,5 @@
 import re
+import hashlib
 
 def _log(s):
     print 'Account: %s' % s
@@ -20,19 +21,20 @@ class AccountManager(object):
             pass
 
     def valid(self, user, password):
-        if user in self._users and self._users[user] == password:
-            _log('Valid account <%s, %s>' % (user, password))
+        print hashlib.md5(password).hexdigest()
+        if user in self._users and self._users[user] == hashlib.md5(password).hexdigest():
+            _log('Valid account <%s, %s>' % (user, self._users[user]))
             return True
         else:
-            _log('Invalid account <%s, %s>' % (user, password))
+            _log('Invalid account <%s, %s>' % (user, self._users[user]))
             return False
 
     def register(self, user, password):
         if user in self._users:
             _log('User %s exists already' % user)
             return False
-        self._users[user] = password
-        _log('Add new account <%s, %s>' % (user, password))
+        self._users[user] = hashlib.md5(password).hexdigest()
+        _log('Add new account <%s, %s>' % (user, self._users[user]))
         return True
 
     def flush(self):
