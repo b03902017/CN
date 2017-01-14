@@ -111,7 +111,7 @@ class CreategroupPage(tk.Frame):
         self.systemlog = tk.Label(self , text = "syslog :")
         self.systemlog.grid(row = 3 ,  column = 1)
 
-        self.finishbutton = tk.Button(self , text = "finish" ,command =self.finish_creategroup)
+        self.finishButton = tk.Button(self , text = "finish" ,command =self.finish_creategroup)
         self.finishButton.grid(row = 2, column = 3)
 
     def add_event(self):
