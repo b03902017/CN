@@ -137,14 +137,18 @@ class LoginPage(tk.Frame):
         self.welcome = tk.Label(self , text = "" , height = 3, font = Login_FONT)
         self.welcome.grid(row = 1 , column = 1)
 
-        self.user = tk.Label(self , text = "User : ")
+        self.user = tk.Label(self , text = "Username : ")
         self.user.grid(row = 2 , column = 0 )
         self.userInput = tk.Entry(self)
         self.userInput.grid(row = 2 , column = 1  , columnspan = 20)
-        self.password = tk.Label(self , text = "Pass : ")
+        self.password = tk.Label(self , text = "Password : ")
         self.password.grid(row = 3, column = 0 )
         self.passwordInput = tk.Entry(self , show = "*")
         self.passwordInput.grid(row = 3 , column = 1 ,columnspan = 20)
+        self.passconfirm = tk.Label(self , text = "Pass Confirm: ")
+        self.passconfirm.grid(row = 4, column = 0 )
+        self.passconfirmInput = tk.Entry(self , show = "*")
+        self.passconfirmInput.grid(row = 4 , column = 1 ,columnspan = 20)
 
         self.loginButton = tk.Button(self , text = "login" , width = 5 , command = self.login_event)
         self.loginButton.grid(row = 3 , column = 22)
@@ -152,26 +156,31 @@ class LoginPage(tk.Frame):
         self.registerButton = tk.Button(self , text = "regis" , width = 5 , command = self.register_event)
         self.registerButton.grid(row = 2 , column = 22)
 
-        self.spacegrid = tk.Label(self , text = "" , height = 10) # for UI beauty
-        self.spacegrid.grid(row = 4)
+        self.spacegrid = tk.Label(self , text = "" , height = 10)
+        self.spacegrid.grid(row = 5)
         self.systemlog = tk.Label(self , text = "syslog :")
-        self.systemlog.grid(row = 5 ,  column = 2 , columnspan = 10)
+        self.systemlog.grid(row = 6 ,  column = 2 , columnspan = 10, sticky='w')
 
     def register_event(self):
         succ = False
         global user , password
         user = self.userInput.get()
         password = self.passwordInput.get()
-        try:
-            succ = client_api.register(connect, user, password)
-            if not succ:
+        passconfirm = self.passconfirmInput.get()
+        if password != passconfirm:
+            self.systemlog["text"] = "Password differs from confirm."
+        else:
+            try:
+                succ = client_api.register(connect, user, password)
+                if succ:
+                    self.systemlog["text"] = "Register success."
+                else:
+                    self.systemlog["text"] = "Register fail."
+            except:
                 self.systemlog["text"] = "Register fail."
-        except:
-            self.systemlog["text"] = "Register fail."
         self.userInput.delete(0 , 'end')
         self.passwordInput.delete(0 , 'end')
-        if succ:
-            self.systemlog["text"] = "Register success."
+        self.passconfirmInput.delete(0 , 'end')
 
     def login_event(self):
         succ = False
@@ -179,18 +188,23 @@ class LoginPage(tk.Frame):
         global logined
         user = self.userInput.get()
         password = self.passwordInput.get()
-        try:
-            succ = client_api.login(connect, user, password)
-            if not succ:
+        passconfirm = self.passconfirmInput.get()
+        if password != passconfirm:
+            self.systemlog["text"] = "Password differs from confirm."
+        else:
+            try:
+                succ = client_api.login(connect, user, password)
+                if succ:
+                    logined = True
+                    self.systemlog["text"] = "syslog :"
+                    self.controller.show_frame("WelcomePage")
+                else:
+                    self.systemlog["text"] = "Login fail."
+            except:
                 self.systemlog["text"] = "Login fail."
-        except:
-            self.systemlog["text"] = "Login fail."
         self.userInput.delete(0 , 'end')
         self.passwordInput.delete(0 , 'end')
-        if succ:
-            logined = True
-            self.systemlog["text"] = "syslog :"
-            self.controller.show_frame("WelcomePage")
+        self.passconfirmInput.delete(0 , 'end')
 
 class WelcomePage(tk.Frame):
 
@@ -216,7 +230,7 @@ class WelcomePage(tk.Frame):
         self.creategroupButton.grid(row = 4 , column = 2)
 
         self.systemlog = tk.Label(self , text = "syslog :")
-        self.systemlog.grid(row = 21 ,  column = 1)
+        self.systemlog.grid(row = 21 ,  column = 1, columnspan = 5, sticky='w')
 
         self.logoutButton = tk.Button(self , text = "logout" , command = self.logout_event)
         self.logoutButton.grid(row = 21 , column = 3)
@@ -240,6 +254,7 @@ class WelcomePage(tk.Frame):
             is_chatting = True
             self.chattargetInput.delete(0 , 'end')
             self.controller.show_frame("ChatroomPage")
+            elf.systemlog["text"] = "syslog :"
         else:
             self.chattargetInput.delete(0 , 'end')
             self.systemlog["text"] = "user or group not exist."
@@ -249,14 +264,15 @@ class WelcomePage(tk.Frame):
         global logined
         try:
             succ = client_api.logout(connect)
-            if not succ:
+            if succ:
+                logined = False
+                self.systemlog["text"] = "syslog :"
+                self.controller.show_frame("LoginPage")
+            else:
                 self.systemlog["text"] = "Logout fail."
         except:
             self.systemlog["text"] = "Logout fail."
-        if succ:
-            logined = False
-            self.systemlog["text"] = "syslog :"
-            self.controller.show_frame("LoginPage")
+
 
 class ChatroomPage(tk.Frame):
 
@@ -284,7 +300,7 @@ class ChatroomPage(tk.Frame):
         self.input.grid(row = 21 , column = 1  )
 
         self.systemlog = tk.Label(self , text = "syslog :")
-        self.systemlog.grid(row = 22 ,  column = 1)
+        self.systemlog.grid(row = 22 ,  column = 0, columnspan = 5, rowspan = 2, sticky='wn')
 
         self.uploadButton = tk.Button(self , text = "Upld" , command = self.upload_event)
         self.uploadButton.grid(row = 21 , column = 3)
@@ -300,13 +316,14 @@ class ChatroomPage(tk.Frame):
         msg = self.input.get()
         try:
             succ = client_api.send_msg(connect, chat_target, msg)
-            if not succ:
+            if succ:
+                self.systemlog["text"] = "Send message success."
+            else:
                 self.systemlog["text"] = "Send message fail."
         except:
             self.systemlog["text"] = "Send message fail."
         self.input.delete(0 , 'end')
-        if succ:
-            self.systemlog["text"] = "Send message success."
+
 
     def upload_event(self):
         succ = False
@@ -314,29 +331,27 @@ class ChatroomPage(tk.Frame):
         try:
             files = [(f, open(f, "r").read()) for f in filenames]
             succ = client_api.send_files(connect, chat_target, files)
-            if not succ:
+            if succ:
+                self.systemlog["text"] = "Send files success."
+            else:
                 self.systemlog["text"] = "Send files fail."
         except:
             self.systemlog["text"] = "Send files fail."
         self.input.delete(0 , 'end')
-        if succ:
-            self.systemlog["text"] = "Send files success."
+
 
     def download_event(self):
         filename = self.input.get()
-        succ = False
         try:
             content = client_api.recv_file(connect, chat_target, filename)
             if not content:
                 self.systemlog["text"] = "Download file fail.\nPlease download by the processed name if needed."
             else:
-                succ = True
+                open(filename, 'w').write(content)
+                self.systemlog["text"] = "Download file success."
         except:
             self.systemlog["text"] = "Download file fail.\nPlease download by the processed name if needed."
         self.input.delete(0 , 'end')
-        if succ:
-            open(filename, 'w').write(content)
-            self.systemlog["text"] = "Download file success."
 
     def leave_chat_event(self):
         self.systemlog["text"] = ""
